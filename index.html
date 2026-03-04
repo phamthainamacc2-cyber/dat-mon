@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pho Dem - Thuc Don</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Firebase Compat SDK (works on all browsers, no module needed) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
 :root{--cream:#F5EDD8;--dark:#1A1208;--gold:#C9963A;--gl:#E8B84B;--red:#B83232;--sf:#2A1F0E;--sf2:#3A2C18;--mu:#9E8B6F;--grn:#4A8C5C;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -105,98 +108,84 @@ header{position:sticky;top:0;z-index:100;background:rgba(26,18,8,.96);backdrop-f
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">Ph&#7889; <em>&#272;&#234;m</em></div>
-  <div class="tbl-badge">&#129681; <span id="tblLabel">B&#224;n 1</span></div>
+  <div class="logo">Pho <em>Dem</em></div>
+  <div class="tbl-badge">Ban <span id="tblLabel">1</span></div>
 </header>
-
 <div class="hero">
-  <h1>Th&#7921;c &#272;&#417;n</h1>
-  <p>Ch&#224;o bu&#7893;i t&#7889;i &#8212; Ch&#250;c qu&#253; kh&#225;ch ngon mi&#7879;ng &#10024;</p>
+  <h1>Thuc Don</h1>
+  <p>Chao buoi toi - Chuc quy khach ngon mieng</p>
 </div>
-
 <div class="tbl-sel">
-  <label>&#128205; Ch&#7885;n b&#224;n c&#7911;a b&#7841;n</label>
-  <select id="tblSel" onchange="doChangeTbl(this.value)">
-    <option value="1">B&#224;n 1</option><option value="2">B&#224;n 2</option>
-    <option value="3">B&#224;n 3</option><option value="4">B&#224;n 4</option>
-    <option value="5">B&#224;n 5</option><option value="6">B&#224;n 6</option>
-    <option value="7">B&#224;n 7</option><option value="8">B&#224;n 8</option>
-    <option value="9">B&#224;n 9</option><option value="10">B&#224;n 10</option>
+  <label>Chon ban cua ban</label>
+  <select id="tblSel" onchange="changeTbl(this.value)">
+    <option value="1">Ban 1</option><option value="2">Ban 2</option>
+    <option value="3">Ban 3</option><option value="4">Ban 4</option>
+    <option value="5">Ban 5</option><option value="6">Ban 6</option>
+    <option value="7">Ban 7</option><option value="8">Ban 8</option>
+    <option value="9">Ban 9</option><option value="10">Ban 10</option>
   </select>
 </div>
-
 <div class="tabs-bar" id="tabs"></div>
 <div class="menu-body" id="menuBody"></div>
-
-<button class="fab" onclick="doOpenCart()">
-  &#128722;<span class="fab-n" id="fabN">0</span>
+<button class="fab" onclick="openCart()">
+  <span style="font-size:24px">&#128722;</span>
+  <span class="fab-n" id="fabN">0</span>
 </button>
-
-<div class="overlay" id="overlay" onclick="doCloseCart()"></div>
-
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
 <div class="drawer" id="drawer">
   <div class="drw-hd">
-    <h2>&#128722; Gi&#7887; h&#224;ng</h2>
-    <button class="cls-x" onclick="doCloseCart()">&#10005;</button>
+    <h2>&#128722; Gio hang</h2>
+    <button class="cls-x" onclick="closeCart()">&#10005;</button>
   </div>
   <div class="drw-items" id="drwItems">
-    <div class="drw-empty" id="drwEmpty">&#127869;&#65039;<br><small>Ch&#432;a c&#243; m&#243;n n&#224;o</small></div>
+    <div class="drw-empty" id="drwEmpty">Chua co mon nao</div>
   </div>
   <div class="note-area">
-    <label>&#128221; Ghi ch&#250; (kh&#244;ng h&#224;nh, &#237;t cay...)</label>
-    <textarea id="noteInput" placeholder="Ghi ch&#250; th&#234;m cho b&#7871;p..."></textarea>
+    <label>Ghi chu (khong hanh, it cay...)</label>
+    <textarea id="noteInput" placeholder="Ghi chu them cho bep..."></textarea>
   </div>
   <div class="drw-ft">
-    <div class="r-sub"><span>T&#7841;m t&#237;nh</span><span id="fSub">0&#273;</span></div>
-    <div class="r-sub"><span>VAT 10%</span><span id="fVat">0&#273;</span></div>
-    <div class="r-tot"><span>T&#7893;ng c&#7897;ng</span><span id="fTot">0&#273;</span></div>
+    <div class="r-sub"><span>Tam tinh</span><span id="fSub">0d</span></div>
+    <div class="r-sub"><span>VAT 10%</span><span id="fVat">0d</span></div>
+    <div class="r-tot"><span>Tong cong</span><span id="fTot">0d</span></div>
     <div class="pay-row">
-      <div class="pm sel" onclick="doSelPay(this,'cash')"><span class="pi">&#128181;</span>Ti&#7873;n m&#7863;t</div>
-      <div class="pm" onclick="doSelPay(this,'card')"><span class="pi">&#128179;</span>Th&#7867;</div>
-      <div class="pm" onclick="doSelPay(this,'transfer')"><span class="pi">&#128241;</span>Chuy&#7875;n kho&#7843;n</div>
+      <div class="pm sel" onclick="selPay(this,'cash')"><span class="pi">&#128181;</span>Tien mat</div>
+      <div class="pm" onclick="selPay(this,'card')"><span class="pi">&#128179;</span>The</div>
+      <div class="pm" onclick="selPay(this,'transfer')"><span class="pi">&#128241;</span>CK</div>
     </div>
-    <button class="send-btn" id="sendBtn" onclick="doOrder()" disabled>&#272;&#7863;t m&#243;n ngay &#8594;</button>
+    <button class="send-btn" id="sendBtn" onclick="doOrder()" disabled>Dat mon ngay</button>
   </div>
 </div>
-
 <div class="qr-modal" id="qrModal">
   <div class="qr-box">
-    <h3>&#128241; Thanh to&#225;n chuy&#7875;n kho&#7843;n</h3>
-    <p style="color:var(--mu);font-size:12px;margin-top:3px;">Qu&#233;t m&#227; QR &#273;&#7875; thanh to&#225;n</p>
+    <h3>Thanh toan chuyen khoan</h3>
     <div class="qr-img" id="qrImg"></div>
-    <p class="qr-info">Ng&#226;n h&#224;ng: <strong>MB Bank</strong></p>
-    <p class="qr-info">S&#7889; TK: <strong>0901234567</strong></p>
-    <p class="qr-info">T&#234;n TK: <strong>NHA HANG PHO DEM</strong></p>
-    <p class="qr-info" style="margin-top:10px;font-size:14px;">S&#7889; ti&#7873;n: <strong id="qrAmt" style="color:var(--gold);font-size:16px;"></strong></p>
-    <button class="qr-confirm" onclick="doConfirmTransfer()">&#10003; &#272;&#227; chuy&#7875;n xong &#8212; X&#225;c nh&#7853;n</button>
-    <button class="qr-cancel" onclick="doCloseQr()">H&#7911;y</button>
+    <p class="qr-info">Ngan hang: <strong>MB Bank</strong></p>
+    <p class="qr-info">STK: <strong>0901234567</strong></p>
+    <p class="qr-info">So tien: <strong id="qrAmt" style="color:var(--gold)"></strong></p>
+    <button class="qr-confirm" onclick="confirmTransfer()">Da chuyen - Xac nhan dat mon</button>
+    <button class="qr-cancel" onclick="closeQr()">Huy</button>
   </div>
 </div>
-
 <div class="suc-modal" id="sucModal">
   <div class="suc-box">
     <div class="suc-ico">&#127881;</div>
-    <h3>&#272;&#7863;t m&#243;n th&#224;nh c&#244;ng!</h3>
+    <h3>Dat mon thanh cong!</h3>
     <div class="suc-id" id="sucId"></div>
-    <p>&#272;&#417;n h&#224;ng &#273;&#227; &#273;&#432;&#7907;c g&#7917;i &#273;&#7871;n b&#7871;p.<br>Vui l&#242;ng ch&#7901; trong gi&#226;y l&#225;t!</p>
-    <button class="suc-cls" onclick="doCloseSuc()">Tuy&#7879;t, c&#7843;m &#417;n! &#128077;</button>
+    <p>Don hang da gui den bep.<br>Vui long cho trong giay lat!</p>
+    <button class="suc-cls" onclick="closeSuc()">OK cam on!</button>
   </div>
 </div>
-
 <div class="snd-ovl" id="sndOvl">
   <div class="spinner"></div>
-  <div style="color:var(--gold);font-size:14px;font-weight:600;">&#272;ang g&#7917;i &#273;&#417;n &#273;&#7871;n b&#7871;p...</div>
+  <div style="color:var(--gold);font-size:14px;font-weight:600;">Dang gui don...</div>
 </div>
-
 <div class="toast" id="toast"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-const cfg = {
+<script>
+// Firebase Compat (global, no module)
+const firebaseConfig = {
   apiKey: "AIzaSyA7OfDr2XjoOdFT5xYd_tdwktrr04S9vdU",
   authDomain: "pho-dem-restaurant.firebaseapp.com",
   databaseURL: "https://pho-dem-restaurant-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -205,99 +194,104 @@ const cfg = {
   messagingSenderId: "377597165170",
   appId: "1:377597165170:web:65066c75ad2cf0354e0ceb"
 };
-const db = getDatabase(initializeApp(cfg));
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 const MENU = {
   "Khai vi": [
-    {id:1,name:"Cha gio tom cua",desc:"Gion tan, nhan thap cam",price:45000,e:"\uD83E\uDD62",isNew:true},
-    {id:2,name:"Goi cuon tom thit",desc:"Tuoi mat, rau song ngon",price:38000,e:"\uD83C\uDF2F"},
-    {id:3,name:"Bap xao bo toi",desc:"Beo ngay, thom nuc mui",price:32000,e:"\uD83C\uDF3D"},
-    {id:4,name:"Dau phu chien sot",desc:"Gion ngoai, mem trong",price:28000,e:"\uD83D\uDFE8"},
+    {id:1,name:"Cha gio tom cua",desc:"Gion tan, nhan thap cam",price:45000,e:"&#x1F962;",isNew:true},
+    {id:2,name:"Goi cuon tom thit",desc:"Tuoi mat, rau song ngon",price:38000,e:"&#x1F32F;"},
+    {id:3,name:"Bap xao bo toi",desc:"Beo ngay, thom nuc mui",price:32000,e:"&#x1F33D;"},
+    {id:4,name:"Dau phu chien sot",desc:"Gion ngoai, mem trong",price:28000,e:"&#x1F7E8;"},
   ],
   "Mon chinh": [
-    {id:5,name:"Bo ne bit tet",desc:"Bo Uc nhap khau, ap chao",price:145000,e:"\uD83E\uDD69",isNew:true},
-    {id:6,name:"Com chien hai san",desc:"Tom, muc tuoi, trung ga",price:85000,e:"\uD83C\uDF5A"},
-    {id:7,name:"Mi xao bo luc lac",desc:"Bo mem, rau xao thom",price:95000,e:"\uD83C\uDF5C"},
-    {id:8,name:"Ca kho to",desc:"Ca basa, nuoc kho dam da",price:75000,e:"\uD83D\uDC1F"},
-    {id:9,name:"Ga nuong sa te",desc:"Ga ta nguyen con uop 24h",price:180000,e:"\uD83C\uDF57"},
-    {id:10,name:"Lau thai hai san",desc:"Tom, muc, ngao, ca vien",price:220000,e:"\uD83E\uDEB5"},
+    {id:5,name:"Bo ne bit tet",desc:"Bo Uc nhap khau, ap chao",price:145000,e:"&#x1F969;",isNew:true},
+    {id:6,name:"Com chien hai san",desc:"Tom, muc tuoi, trung ga",price:85000,e:"&#x1F35A;"},
+    {id:7,name:"Mi xao bo luc lac",desc:"Bo mem, rau xao thom",price:95000,e:"&#x1F35C;"},
+    {id:8,name:"Ca kho to",desc:"Ca basa, nuoc kho dam da",price:75000,e:"&#x1F41F;"},
+    {id:9,name:"Ga nuong sa te",desc:"Ga ta nguyen con uop 24h",price:180000,e:"&#x1F357;"},
+    {id:10,name:"Lau thai hai san",desc:"Tom, muc, ngao, ca vien",price:220000,e:"&#x1FAB5;"},
   ],
   "Do uong": [
-    {id:11,name:"Nuoc ep cam tuoi",desc:"Cam vat tuoi, khong duong",price:35000,e:"\uD83C\uDF4A"},
-    {id:12,name:"Ca phe den da",desc:"Robusta Dak Lak",price:25000,e:"\u2615"},
-    {id:13,name:"Tra dao cam sa",desc:"Mat lanh, thom trai cay",price:40000,e:"\uD83C\uDF51"},
-    {id:14,name:"Bia Saigon Special",desc:"Lon 330ml lanh",price:28000,e:"\uD83C\uDF7A"},
-    {id:15,name:"Coca / Pepsi",desc:"Lon lanh 330ml",price:22000,e:"\uD83E\uDD64"},
+    {id:11,name:"Nuoc ep cam tuoi",desc:"Cam vat tuoi, khong duong",price:35000,e:"&#x1F34A;"},
+    {id:12,name:"Ca phe den da",desc:"Robusta Dak Lak",price:25000,e:"&#x2615;"},
+    {id:13,name:"Tra dao cam sa",desc:"Mat lanh, thom trai cay",price:40000,e:"&#x1F351;"},
+    {id:14,name:"Bia Saigon Special",desc:"Lon 330ml lanh",price:28000,e:"&#x1F37A;"},
+    {id:15,name:"Coca Pepsi",desc:"Lon lanh 330ml",price:22000,e:"&#x1F964;"},
   ],
   "Trang miem": [
-    {id:16,name:"Che thai dac biet",desc:"Nuoc cot dua, 9 loai che",price:45000,e:"\uD83C\uDF67"},
-    {id:17,name:"Banh flan caramel",desc:"Min ngon, sot caramel dam",price:30000,e:"\uD83C\uDF6E"},
-    {id:18,name:"Kem dua dua",desc:"Kem tuoi, dua nao thom",price:38000,e:"\uD83C\uDF68"},
+    {id:16,name:"Che thai dac biet",desc:"Nuoc cot dua, 9 loai che",price:45000,e:"&#x1F367;"},
+    {id:17,name:"Banh flan caramel",desc:"Min ngon, sot caramel dam",price:30000,e:"&#x1F36E;"},
+    {id:18,name:"Kem dua dua",desc:"Kem tuoi, dua nao thom",price:38000,e:"&#x1F368;"},
   ]
 };
 
-let cart = {}, payMethod = 'cash', tableNum = '1', oc = Date.now();
-const fmt = n => Number(n).toLocaleString('vi-VN') + 'd';
-const findItem = id => { for (const a of Object.values(MENU)) { const i = a.find(x => x.id == id); if (i) return i; } };
-const showToast = msg => {
-  const t = document.getElementById('toast');
+var cart = {}, payMethod = 'cash', tableNum = '1', oc = Date.now();
+
+function fmt(n) { return Number(n).toLocaleString('vi-VN') + 'd'; }
+function findItem(id) {
+  for (var cat in MENU) {
+    for (var i = 0; i < MENU[cat].length; i++) {
+      if (MENU[cat][i].id == id) return MENU[cat][i];
+    }
+  }
+}
+function showToast(msg) {
+  var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-};
+  setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
 
 function initMenu() {
-  const cats = Object.keys(MENU);
-  const tabsEl = document.getElementById('tabs');
-  const bodyEl = document.getElementById('menuBody');
-
-  tabsEl.innerHTML = '<button class="tab active" onclick="doFilterCat(\'all\',this)">Tat ca</button>' +
-    cats.map(c => '<button class="tab" onclick="doFilterCat(\'' + c + '\',this)">' + c + '</button>').join('');
-
-  bodyEl.innerHTML = cats.map(cat =>
-    '<div class="cat-title" data-cat="' + cat + '">' + cat + '</div>' +
-    '<div class="items-grid" data-cat="' + cat + '">' +
-    MENU[cat].map(it =>
-      '<div class="ic" id="ic-' + it.id + '" onclick="doAddItem(' + it.id + ')">' +
-      (it.isNew ? '<span class="badge-new">MOI</span>' : '') +
-      '<span class="qty-b" id="ib-' + it.id + '">0</span>' +
-      '<div class="ic-em">' + it.e + '</div>' +
-      '<div class="ic-body">' +
-      '<div class="ic-name">' + it.name + '</div>' +
-      '<div class="ic-desc">' + it.desc + '</div>' +
-      '<div class="ic-foot">' +
-      '<span class="ic-price">' + fmt(it.price) + '</span>' +
-      '<button class="add-btn" onclick="event.stopPropagation();doAddItem(' + it.id + ')">+</button>' +
-      '</div></div></div>'
-    ).join('') + '</div>'
-  ).join('');
+  var cats = Object.keys(MENU);
+  var tabsEl = document.getElementById('tabs');
+  var bodyEl = document.getElementById('menuBody');
+  tabsEl.innerHTML = '<button class="tab active" onclick="filterCat('all',this)">Tat ca</button>' +
+    cats.map(function(c){ return '<button class="tab" onclick="filterCat('' + c + '',this)">' + c + '</button>'; }).join('');
+  bodyEl.innerHTML = cats.map(function(cat){
+    return '<div class="cat-title" data-cat="' + cat + '">' + cat + '</div>' +
+      '<div class="items-grid" data-cat="' + cat + '">' +
+      MENU[cat].map(function(it){
+        return '<div class="ic" id="ic-' + it.id + '" onclick="addItem(' + it.id + ')">' +
+          (it.isNew ? '<span class="badge-new">MOI</span>' : '') +
+          '<span class="qty-b" id="ib-' + it.id + '">0</span>' +
+          '<div class="ic-em">' + it.e + '</div>' +
+          '<div class="ic-body">' +
+          '<div class="ic-name">' + it.name + '</div>' +
+          '<div class="ic-desc">' + it.desc + '</div>' +
+          '<div class="ic-foot">' +
+          '<span class="ic-price">' + fmt(it.price) + '</span>' +
+          '<button class="add-btn" onclick="event.stopPropagation();addItem(' + it.id + ')">+</button>' +
+          '</div></div></div>';
+      }).join('') + '</div>';
+  }).join('');
 }
 
 function updateUI() {
-  const ids = Object.keys(cart).map(Number);
-  const qty = ids.reduce((s, id) => s + cart[id], 0);
-  const sub = ids.reduce((s, id) => s + cart[id] * findItem(id).price, 0);
-  const vat = Math.round(sub * 0.1);
+  var ids = Object.keys(cart).map(Number);
+  var qty = ids.reduce(function(s,id){ return s + cart[id]; }, 0);
+  var sub = ids.reduce(function(s,id){ return s + cart[id] * findItem(id).price; }, 0);
+  var vat = Math.round(sub * 0.1);
   document.getElementById('fabN').textContent = qty;
-  document.querySelectorAll('.ic').forEach(c => c.classList.remove('in-cart'));
-  ids.forEach(id => {
-    const c = document.getElementById('ic-' + id);
-    const b = document.getElementById('ib-' + id);
+  document.querySelectorAll('.ic').forEach(function(c){ c.classList.remove('in-cart'); });
+  ids.forEach(function(id){
+    var c = document.getElementById('ic-' + id);
+    var b = document.getElementById('ib-' + id);
     if (c) { c.classList.add('in-cart'); b.textContent = cart[id]; }
   });
-  const di = document.getElementById('drwItems');
-  di.querySelectorAll('.ci').forEach(e => e.remove());
+  var di = document.getElementById('drwItems');
+  di.querySelectorAll('.ci').forEach(function(e){ e.remove(); });
   document.getElementById('drwEmpty').style.display = ids.length ? 'none' : '';
-  ids.forEach(id => {
-    const it = findItem(id);
-    const d = document.createElement('div');
+  ids.forEach(function(id){
+    var it = findItem(id);
+    var d = document.createElement('div');
     d.className = 'ci';
-    d.innerHTML =
-      '<div class="ci-icon">' + it.e + '</div>' +
+    d.innerHTML = '<div class="ci-icon">' + it.e + '</div>' +
       '<div class="ci-info"><div class="ci-name">' + it.name + '</div><div class="ci-price">' + fmt(it.price) + '</div></div>' +
       '<div class="qc">' +
-      '<button class="qb" onclick="doChQty(' + id + ',-1)">&minus;</button>' +
+      '<button class="qb" onclick="chQty(' + id + ',-1)">-</button>' +
       '<span class="qn">' + cart[id] + '</span>' +
-      '<button class="qb" onclick="doChQty(' + id + ',1)">+</button>' +
+      '<button class="qb" onclick="chQty(' + id + ',1)">+</button>' +
       '</div>';
     di.appendChild(d);
   });
@@ -307,76 +301,83 @@ function updateUI() {
   document.getElementById('sendBtn').disabled = !ids.length;
 }
 
-async function submitOrder() {
-  const ids = Object.keys(cart).map(Number);
-  if (!ids.length) return;
-  const sub = ids.reduce((s, id) => s + cart[id] * findItem(id).price, 0);
-  const vat = Math.round(sub * 0.1);
-  const orderId = 'ORD-' + String(++oc).slice(-5);
-  const order = {
-    orderId,
-    table: 'Ban ' + tableNum,
-    items: ids.map(id => ({ id, name: findItem(id).name, emoji: findItem(id).e, price: findItem(id).price, qty: cart[id] })),
-    note: document.getElementById('noteInput').value || '',
-    payMethod, subtotal: sub, vat, total: sub + vat,
-    status: 'new', createdAt: serverTimestamp()
-  };
-  document.getElementById('sndOvl').classList.add('show');
-  try {
-    await push(ref(db, 'orders'), order);
-    cart = {};
-    document.getElementById('noteInput').value = '';
-    updateUI();
-    doCloseCart();
-    document.getElementById('sndOvl').classList.remove('show');
-    document.getElementById('sucId').textContent = orderId;
-    document.getElementById('sucModal').classList.add('show');
-  } catch (err) {
-    document.getElementById('sndOvl').classList.remove('show');
-    showToast('Loi ket noi, thu lai!');
-    console.error(err);
-  }
-}
-
-function genQR() {
-  const box = document.getElementById('qrImg');
-  box.innerHTML = '';
-  const g = document.createElement('div');
-  g.style.cssText = 'display:grid;grid-template-columns:repeat(10,1fr);gap:2px;padding:10px;background:white;width:160px;height:160px;';
-  for (let i = 0; i < 100; i++) {
-    const c = document.createElement('div');
-    c.style.cssText = 'width:12px;height:12px;background:' + (Math.random() > 0.4 ? '#1A1208' : 'white') + ';border-radius:1px;';
-    g.appendChild(c);
-  }
-  box.appendChild(g);
-}
-
-// ---- GLOBAL FUNCTIONS (accessible from HTML onclick) ----
-window.doFilterCat = (f, btn) => {
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+function filterCat(f, btn) {
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
-  document.querySelectorAll('[data-cat]').forEach(el => el.style.display = (f === 'all' || el.dataset.cat === f) ? '' : 'none');
-};
-window.doChangeTbl = v => { tableNum = v; document.getElementById('tblLabel').textContent = 'Ban ' + v; };
-window.doAddItem   = id => { cart[id] = (cart[id] || 0) + 1; updateUI(); showToast('Da them vao gio!'); };
-window.doChQty     = (id, d) => { cart[id] = (cart[id] || 0) + d; if (cart[id] <= 0) delete cart[id]; updateUI(); };
-window.doOpenCart  = () => { document.getElementById('drawer').classList.add('show'); document.getElementById('overlay').classList.add('show'); };
-window.doCloseCart = () => { document.getElementById('drawer').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); };
-window.doSelPay    = (el, m) => { document.querySelectorAll('.pm').forEach(e => e.classList.remove('sel')); el.classList.add('sel'); payMethod = m; };
-window.doOrder     = () => {
+  document.querySelectorAll('[data-cat]').forEach(function(el){
+    el.style.display = (f === 'all' || el.dataset.cat === f) ? '' : 'none';
+  });
+}
+function changeTbl(v) { tableNum = v; document.getElementById('tblLabel').textContent = v; }
+function addItem(id) { cart[id] = (cart[id] || 0) + 1; updateUI(); showToast('Da them vao gio!'); }
+function chQty(id, d) { cart[id] = (cart[id] || 0) + d; if (cart[id] <= 0) delete cart[id]; updateUI(); }
+function openCart() { document.getElementById('drawer').classList.add('show'); document.getElementById('overlay').classList.add('show'); }
+function closeCart() { document.getElementById('drawer').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); }
+function selPay(el, m) { document.querySelectorAll('.pm').forEach(function(e){ e.classList.remove('sel'); }); el.classList.add('sel'); payMethod = m; }
+function closeQr() { document.getElementById('qrModal').classList.remove('show'); }
+function closeSuc() { document.getElementById('sucModal').classList.remove('show'); }
+function confirmTransfer() { closeQr(); submitOrder(); }
+
+function doOrder() {
   if (payMethod === 'transfer') {
-    const ids = Object.keys(cart).map(Number);
-    const sub = ids.reduce((s, id) => s + cart[id] * findItem(id).price, 0);
+    var ids = Object.keys(cart).map(Number);
+    var sub = ids.reduce(function(s,id){ return s + cart[id] * findItem(id).price; }, 0);
     document.getElementById('qrAmt').textContent = fmt(sub + Math.round(sub * 0.1));
     genQR();
     document.getElementById('qrModal').classList.add('show');
   } else {
     submitOrder();
   }
-};
-window.doConfirmTransfer = () => { document.getElementById('qrModal').classList.remove('show'); submitOrder(); };
-window.doCloseQr  = () => document.getElementById('qrModal').classList.remove('show');
-window.doCloseSuc = () => document.getElementById('sucModal').classList.remove('show');
+}
+
+function submitOrder() {
+  var ids = Object.keys(cart).map(Number);
+  if (!ids.length) return;
+  var sub = ids.reduce(function(s,id){ return s + cart[id] * findItem(id).price; }, 0);
+  var vat = Math.round(sub * 0.1);
+  var orderId = 'ORD-' + String(++oc).slice(-5);
+  var order = {
+    orderId: orderId,
+    table: 'Ban ' + tableNum,
+    items: ids.map(function(id){
+      var it = findItem(id);
+      return { id: id, name: it.name, emoji: it.e, price: it.price, qty: cart[id] };
+    }),
+    note: document.getElementById('noteInput').value || '',
+    payMethod: payMethod,
+    subtotal: sub, vat: vat, total: sub + vat,
+    status: 'new',
+    createdAt: firebase.database.ServerValue.TIMESTAMP
+  };
+  document.getElementById('sndOvl').classList.add('show');
+  db.ref('orders').push(order)
+    .then(function(){
+      cart = {};
+      document.getElementById('noteInput').value = '';
+      updateUI();
+      closeCart();
+      document.getElementById('sndOvl').classList.remove('show');
+      document.getElementById('sucId').textContent = orderId;
+      document.getElementById('sucModal').classList.add('show');
+    })
+    .catch(function(err){
+      document.getElementById('sndOvl').classList.remove('show');
+      showToast('Loi: ' + err.message);
+      console.error(err);
+    });
+}
+
+function genQR() {
+  var box = document.getElementById('qrImg'); box.innerHTML = '';
+  var g = document.createElement('div');
+  g.style.cssText = 'display:grid;grid-template-columns:repeat(10,1fr);gap:2px;padding:10px;background:white;width:160px;height:160px;';
+  for (var i = 0; i < 100; i++) {
+    var c = document.createElement('div');
+    c.style.cssText = 'width:12px;height:12px;background:' + (Math.random() > 0.4 ? '#1A1208' : 'white') + ';border-radius:1px;';
+    g.appendChild(c);
+  }
+  box.appendChild(g);
+}
 
 initMenu();
 </script>
