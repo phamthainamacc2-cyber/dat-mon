@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pho Dem - Thuc Don</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5EDD8;--dark:#1A1208;--gold:#C9963A;--gl:#E8B84B;--red:#B83232;--sf:#2A1F0E;--sf2:#3A2C18;--mu:#9E8B6F;--grn:#4A8C5C;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--cream);font-family:'Be Vietnam Pro',sans-serif;min-height:100vh;overflow-x:hidden;}
+header{position:sticky;top:0;z-index:100;background:rgba(26,18,8,.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,150,58,.25);padding:0 20px;height:62px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Playfair Display',serif;font-size:21px;color:var(--gold);}
+.logo em{font-style:italic;color:var(--cream);}
+.tbl-badge{background:var(--sf2);border:1px solid rgba(201,150,58,.35);color:var(--gold);padding:5px 14px;border-radius:20px;font-size:13px;}
+.fab{position:fixed;bottom:24px;right:20px;z-index:99;background:var(--gold);color:var(--dark);border:none;width:62px;height:62px;border-radius:50%;font-size:26px;cursor:pointer;box-shadow:0 6px 28px rgba(201,150,58,.45);display:flex;align-items:center;justify-content:center;transition:transform .2s;}
+.fab:hover{transform:scale(1.08);}
+.fab-n{position:absolute;top:-5px;right:-5px;background:var(--red);color:#fff;width:23px;height:23px;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--dark);}
+.hero{background:linear-gradient(160deg,var(--sf) 0%,var(--dark) 55%);padding:38px 20px 30px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(201,150,58,.14) 0%,transparent 65%);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(26px,6vw,46px);color:var(--gold);margin-bottom:6px;position:relative;}
+.hero p{color:var(--mu);font-size:13px;position:relative;}
+.tbl-sel{padding:18px 20px 0;}
+.tbl-sel label{font-size:12px;color:var(--mu);display:block;margin-bottom:6px;}
+.tbl-sel select{background:var(--sf2);border:1px solid rgba(201,150,58,.3);color:var(--cream);padding:10px 14px;border-radius:8px;font-size:14px;font-family:'Be Vietnam Pro',sans-serif;width:100%;max-width:260px;cursor:pointer;}
+.tbl-sel select:focus{outline:none;border-color:var(--gold);}
+.tabs-bar{padding:18px 16px 0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;}
+.tabs-bar::-webkit-scrollbar{display:none;}
+.tab{white-space:nowrap;background:var(--sf);border:1px solid rgba(201,150,58,.15);color:var(--mu);padding:8px 18px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Be Vietnam Pro',sans-serif;}
+.tab.active,.tab:hover{background:var(--gold);color:var(--dark);border-color:var(--gold);}
+.menu-body{padding:20px 16px 130px;}
+.cat-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);margin:28px 0 14px;display:flex;align-items:center;gap:10px;}
+.cat-title::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(201,150,58,.35),transparent);}
+.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:13px;}
+.ic{background:var(--sf);border:1px solid rgba(201,150,58,.12);border-radius:14px;overflow:hidden;cursor:pointer;position:relative;transition:transform .2s,border-color .2s,box-shadow .2s;}
+.ic:hover{transform:translateY(-3px);border-color:rgba(201,150,58,.45);box-shadow:0 8px 22px rgba(0,0,0,.4);}
+.ic.in-cart{border-color:var(--gold);box-shadow:0 0 0 1.5px rgba(201,150,58,.55);}
+.ic-em{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:48px;background:var(--sf2);}
+.ic-body{padding:12px;}
+.ic-name{font-size:13px;font-weight:600;color:var(--cream);margin-bottom:3px;line-height:1.35;}
+.ic-desc{font-size:11px;color:var(--mu);margin-bottom:10px;line-height:1.5;}
+.ic-foot{display:flex;align-items:center;justify-content:space-between;}
+.ic-price{font-family:'Playfair Display',serif;font-size:15px;color:var(--gold);font-weight:700;}
+.add-btn{width:29px;height:29px;background:var(--gold);border:none;border-radius:7px;color:var(--dark);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .15s;}
+.add-btn:hover{background:var(--gl);}
+.qty-b{position:absolute;top:7px;right:7px;background:var(--gold);color:var(--dark);width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;display:none;align-items:center;justify-content:center;}
+.ic.in-cart .qty-b{display:flex;}
+.badge-new{position:absolute;top:7px;left:7px;background:var(--red);color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;}
+.overlay.show{display:block;}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:min(410px,100vw);background:var(--sf);z-index:201;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-left:1px solid rgba(201,150,58,.2);}
+.drawer.show{transform:translateX(0);}
+.drw-hd{padding:18px 20px;border-bottom:1px solid rgba(201,150,58,.2);display:flex;align-items:center;justify-content:space-between;}
+.drw-hd h2{font-family:'Playfair Display',serif;color:var(--gold);font-size:18px;}
+.cls-x{background:var(--sf2);border:none;color:var(--cream);width:34px;height:34px;border-radius:8px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.drw-items{flex:1;overflow-y:auto;padding:14px 18px;}
+.drw-empty{text-align:center;padding:50px 20px;color:var(--mu);font-size:14px;}
+.ci{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.ci-icon{font-size:30px;width:38px;text-align:center;flex-shrink:0;}
+.ci-info{flex:1;}
+.ci-name{font-size:13px;font-weight:500;margin-bottom:3px;}
+.ci-price{font-size:12px;color:var(--gold);}
+.qc{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.qb{background:var(--sf2);border:1px solid rgba(201,150,58,.25);color:var(--cream);width:27px;height:27px;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.qb:hover{background:var(--gold);color:var(--dark);border-color:var(--gold);}
+.qn{font-weight:600;font-size:14px;min-width:20px;text-align:center;}
+.note-area{padding:12px 18px;border-top:1px solid rgba(255,255,255,.05);}
+.note-area label{font-size:11px;color:var(--mu);display:block;margin-bottom:5px;}
+.note-area textarea{width:100%;background:var(--sf2);border:1px solid rgba(201,150,58,.2);color:var(--cream);padding:9px;border-radius:8px;font-size:12px;font-family:'Be Vietnam Pro',sans-serif;resize:none;height:60px;}
+.note-area textarea:focus{outline:none;border-color:var(--gold);}
+.drw-ft{padding:14px 18px;border-top:1px solid rgba(201,150,58,.2);background:rgba(26,18,8,.65);}
+.r-sub{display:flex;justify-content:space-between;font-size:12px;color:var(--mu);margin-bottom:5px;}
+.r-tot{display:flex;justify-content:space-between;font-family:'Playfair Display',serif;font-size:19px;color:var(--gold);margin-bottom:14px;padding-top:10px;border-top:1px solid rgba(201,150,58,.2);}
+.pay-row{display:flex;gap:8px;margin-bottom:12px;}
+.pm{flex:1;background:var(--sf2);border:1px solid rgba(201,150,58,.18);color:var(--mu);padding:9px 4px;border-radius:8px;font-size:11px;cursor:pointer;text-align:center;transition:all .2s;font-family:'Be Vietnam Pro',sans-serif;}
+.pm.sel{background:rgba(201,150,58,.15);border-color:var(--gold);color:var(--gold);}
+.pm .pi{font-size:18px;display:block;margin-bottom:3px;}
+.send-btn{width:100%;background:var(--gold);color:var(--dark);border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s;font-family:'Be Vietnam Pro',sans-serif;}
+.send-btn:hover{background:var(--gl);}
+.send-btn:disabled{background:var(--mu);cursor:not-allowed;}
+.qr-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;align-items:center;justify-content:center;}
+.qr-modal.show{display:flex;}
+.qr-box{background:var(--sf);border:1px solid rgba(201,150,58,.3);border-radius:16px;padding:26px;text-align:center;max-width:320px;width:90%;}
+.qr-box h3{font-family:'Playfair Display',serif;color:var(--gold);font-size:19px;margin-bottom:4px;}
+.qr-img{width:160px;height:160px;background:#fff;border-radius:12px;margin:14px auto;overflow:hidden;}
+.qr-info{font-size:13px;color:var(--mu);margin-bottom:3px;}
+.qr-info strong{color:var(--cream);}
+.qr-confirm{width:100%;background:var(--gold);color:var(--dark);border:none;padding:12px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;margin-top:12px;font-family:'Be Vietnam Pro',sans-serif;}
+.qr-cancel{width:100%;background:transparent;border:1px solid rgba(201,150,58,.25);color:var(--mu);padding:10px;border-radius:8px;font-size:12px;cursor:pointer;margin-top:7px;font-family:'Be Vietnam Pro',sans-serif;}
+.suc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:500;align-items:center;justify-content:center;}
+.suc-modal.show{display:flex;}
+.suc-box{background:var(--sf);border:1px solid rgba(74,140,92,.4);border-radius:16px;padding:34px 28px;text-align:center;max-width:300px;width:90%;animation:popIn .3s ease;}
+@keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.suc-ico{font-size:54px;margin-bottom:12px;}
+.suc-box h3{font-family:'Playfair Display',serif;color:#6EC98A;font-size:22px;margin-bottom:6px;}
+.suc-box p{font-size:13px;color:var(--mu);line-height:1.65;}
+.suc-id{font-family:'Playfair Display',serif;color:var(--gold);font-size:20px;margin:12px 0;}
+.suc-cls{background:var(--grn);color:#fff;border:none;padding:12px 32px;border-radius:8px;font-weight:700;cursor:pointer;margin-top:8px;font-family:'Be Vietnam Pro',sans-serif;font-size:14px;}
+.toast{position:fixed;bottom:106px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--sf);border:1px solid rgba(201,150,58,.35);color:var(--cream);padding:10px 22px;border-radius:22px;font-size:13px;font-weight:500;z-index:600;opacity:0;transition:all .25s;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.snd-ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:700;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+.snd-ovl.show{display:flex;}
+.spinner{width:42px;height:42px;border:3px solid rgba(201,150,58,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Ph&#7889; <em>&#272;&#234;m</em></div>
+  <div class="tbl-badge">&#129681; <span id="tblLabel">B&#224;n 1</span></div>
+</header>
+
+<div class="hero">
+  <h1>Th&#7921;c &#272;&#417;n</h1>
+  <p>Ch&#224;o bu&#7893;i t&#7889;i &#8212; Ch&#250;c qu&#253; kh&#225;ch ngon mi&#7879;ng &#10024;</p>
+</div>
+
+<div class="tbl-sel">
+  <label>&#128205; Ch&#7885;n b&#224;n c&#7911;a b&#7841;n</label>
+  <select id="tblSel" onchange="doChangeTbl(this.value)">
+    <option value="1">B&#224;n 1</option><option value="2">B&#224;n 2</option>
+    <option value="3">B&#224;n 3</option><option value="4">B&#224;n 4</option>
+    <option value="5">B&#224;n 5</option><option value="6">B&#224;n 6</option>
+    <option value="7">B&#224;n 7</option><option value="8">B&#224;n 8</option>
+    <option value="9">B&#224;n 9</option><option value="10">B&#224;n 10</option>
+  </select>
+</div>
+
+<div class="tabs-bar" id="tabs"></div>
+<div class="menu-body" id="menuBody"></div>
+
+<button class="fab" onclick="doOpenCart()">
+  &#128722;<span class="fab-n" id="fabN">0</span>
+</button>
+
+<div class="overlay" id="overlay" onclick="doCloseCart()"></div>
+
+<div class="drawer" id="drawer">
+  <div class="drw-hd">
+    <h2>&#128722; Gi&#7887; h&#224;ng</h2>
+    <button class="cls-x" onclick="doCloseCart()">&#10005;</button>
+  </div>
+  <div class="drw-items" id="drwItems">
+    <div class="drw-empty" id="drwEmpty">&#127869;&#65039;<br><small>Ch&#432;a c&#243; m&#243;n n&#224;o</small></div>
+  </div>
+  <div class="note-area">
+    <label>&#128221; Ghi ch&#250; (kh&#244;ng h&#224;nh, &#237;t cay...)</label>
+    <textarea id="noteInput" placeholder="Ghi ch&#250; th&#234;m cho b&#7871;p..."></textarea>
+  </div>
+  <div class="drw-ft">
+    <div class="r-sub"><span>T&#7841;m t&#237;nh</span><span id="fSub">0&#273;</span></div>
+    <div class="r-sub"><span>VAT 10%</span><span id="fVat">0&#273;</span></div>
+    <div class="r-tot"><span>T&#7893;ng c&#7897;ng</span><span id="fTot">0&#273;</span></div>
+    <div class="pay-row">
+      <div class="pm sel" onclick="doSelPay(this,'cash')"><span class="pi">&#128181;</span>Ti&#7873;n m&#7863;t</div>
+      <div class="pm" onclick="doSelPay(this,'card')"><span class="pi">&#128179;</span>Th&#7867;</div>
+      <div class="pm" onclick="doSelPay(this,'transfer')"><span class="pi">&#128241;</span>Chuy&#7875;n kho&#7843;n</div>
+    </div>
+    <button class="send-btn" id="sendBtn" onclick="doOrder()" disabled>&#272;&#7863;t m&#243;n ngay &#8594;</button>
+  </div>
+</div>
+
+<div class="qr-modal" id="qrModal">
+  <div class="qr-box">
+    <h3>&#128241; Thanh to&#225;n chuy&#7875;n kho&#7843;n</h3>
+    <p style="color:var(--mu);font-size:12px;margin-top:3px;">Qu&#233;t m&#227; QR &#273;&#7875; thanh to&#225;n</p>
+    <div class="qr-img" id="qrImg"></div>
+    <p class="qr-info">Ng&#226;n h&#224;ng: <strong>MB Bank</strong></p>
+    <p class="qr-info">S&#7889; TK: <strong>0901234567</strong></p>
+    <p class="qr-info">T&#234;n TK: <strong>NHA HANG PHO DEM</strong></p>
+    <p class="qr-info" style="margin-top:10px;font-size:14px;">S&#7889; ti&#7873;n: <strong id="qrAmt" style="color:var(--gold);font-size:16px;"></strong></p>
+    <button class="qr-confirm" onclick="doConfirmTransfer()">&#10003; &#272;&#227; chuy&#7875;n xong &#8212; X&#225;c nh&#7853;n</button>
+    <button class="qr-cancel" onclick="doCloseQr()">H&#7911;y</button>
+  </div>
+</div>
+
+<div class="suc-modal" id="sucModal">
+  <div class="suc-box">
+    <div class="suc-ico">&#127881;</div>
+    <h3>&#272;&#7863;t m&#243;n th&#224;nh c&#244;ng!</h3>
+    <div class="suc-id" id="sucId"></div>
+    <p>&#272;&#417;n h&#224;ng &#273;&#227; &#273;&#432;&#7907;c g&#7917;i &#273;&#7871;n b&#7871;p.<br>Vui l&#242;ng ch&#7901; trong gi&#226;y l&#225;t!</p>
+    <button class="suc-cls" onclick="doCloseSuc()">Tuy&#7879;t, c&#7843;m &#417;n! &#128077;</button>
+  </div>
+</div>
+
+<div class="snd-ovl" id="sndOvl">
+  <div class="spinner"></div>
+  <div style="color:var(--gold);font-size:14px;font-weight:600;">&#272;ang g&#7917;i &#273;&#417;n &#273;&#7871;n b&#7871;p...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const cfg = {
+  apiKey: "AIzaSyA7OfDr2XjoOdFT5xYd_tdwktrr04S9vdU",
+  authDomain: "pho-dem-restaurant.firebaseapp.com",
+  databaseURL: "https://pho-dem-restaurant-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "pho-dem-restaurant",
+  storageBucket: "pho-dem-restaurant.firebasestorage.app",
+  messagingSenderId: "377597165170",
+  appId: "1:377597165170:web:65066c75ad2cf0354e0ceb"
+};
+const db = getDatabase(initializeApp(cfg));
+
+const MENU = {
+  "Khai vi": [
+    {id:1,name:"Cha gio tom cua",desc:"Gion tan, nhan thap cam",price:45000,e:"\uD83E\uDD62",isNew:true},
+    {id:2,name:"Goi cuon tom thit",desc:"Tuoi mat, rau song ngon",price:38000,e:"\uD83C\uDF2F"},
+    {id:3,name:"Bap xao bo toi",desc:"Beo ngay, thom nuc mui",price:32000,e:"\uD83C\uDF3D"},
+    {id:4,name:"Dau phu chien sot",desc:"Gion ngoai, mem trong",price:28000,e:"\uD83D\uDFE8"},
+  ],
+  "Mon chinh": [
+    {id:5,name:"Bo ne bit tet",desc:"Bo Uc nhap khau, ap chao",price:145000,e:"\uD83E\uDD69",isNew:true},
+    {id:6,name:"Com chien hai san",desc:"Tom, muc tuoi, trung ga",price:85000,e:"\uD83C\uDF5A"},
+    {id:7,name:"Mi xao bo luc lac",desc:"Bo mem, rau xao thom",price:95000,e:"\uD83C\uDF5C"},
+    {id:8,name:"Ca kho to",desc:"Ca basa, nuoc kho dam da",price:75000,e:"\uD83D\uDC1F"},
+    {id:9,name:"Ga nuong sa te",desc:"Ga ta nguyen con uop 24h",price:180000,e:"\uD83C\uDF57"},
+    {id:10,name:"Lau thai hai san",desc:"Tom, muc, ngao, ca vien",price:220000,e:"\uD83E\uDEB5"},
+  ],
+  "Do uong": [
+    {id:11,name:"Nuoc ep cam tuoi",desc:"Cam vat tuoi, khong duong",price:35000,e:"\uD83C\uDF4A"},
+    {id:12,name:"Ca phe den da",desc:"Robusta Dak Lak",price:25000,e:"\u2615"},
+    {id:13,name:"Tra dao cam sa",desc:"Mat lanh, thom trai cay",price:40000,e:"\uD83C\uDF51"},
+    {id:14,name:"Bia Saigon Special",desc:"Lon 330ml lanh",price:28000,e:"\uD83C\uDF7A"},
+    {id:15,name:"Coca / Pepsi",desc:"Lon lanh 330ml",price:22000,e:"\uD83E\uDD64"},
+  ],
+  "Trang miem": [
+    {id:16,name:"Che thai dac biet",desc:"Nuoc cot dua, 9 loai che",price:45000,e:"\uD83C\uDF67"},
+    {id:17,name:"Banh flan caramel",desc:"Min ngon, sot caramel dam",price:30000,e:"\uD83C\uDF6E"},
+    {id:18,name:"Kem dua dua",desc:"Kem tuoi, dua nao thom",price:38000,e:"\uD83C\uDF68"},
+  ]
+};
+
+let cart = {}, payMethod = 'cash', tableNum = '1', oc = Date.now();
+const fmt = n => Number(n).toLocaleString('vi-VN') + 'd';
+const findItem = id => { for (const a of Object.values(MENU)) { const i = a.find(x => x.id == id); if (i) return i; } };
+const showToast = msg => {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+};
+
+function initMenu() {
+  const cats = Object.keys(MENU);
+  const tabsEl = document.getElementById('tabs');
+  const bodyEl = document.getElementById('menuBody');
+
+  tabsEl.innerHTML = '<button class="tab active" onclick="doFilterCat(\'all\',this)">Tat ca</button>' +
+    cats.map(c => '<button class="tab" onclick="doFilterCat(\'' + c + '\',this)">' + c + '</button>').join('');
+
+  bodyEl.innerHTML = cats.map(cat =>
+    '<div class="cat-title" data-cat="' + cat + '">' + cat + '</div>' +
+    '<div class="items-grid" data-cat="' + cat + '">' +
+    MENU[cat].map(it =>
+      '<div class="ic" id="ic-' + it.id + '" onclick="doAddItem(' + it.id + ')">' +
+      (it.isNew ? '<span class="badge-new">MOI</span>' : '') +
+      '<span class="qty-b" id="ib-' + it.id + '">0</span>' +
+      '<div class="ic-em">' + it.e + '</div>' +
+      '<div class="ic-body">' +
+      '<div class="ic-name">' + it.name + '</div>' +
+      '<div class="ic-desc">' + it.desc + '</div>' +
+      '<div class="ic-foot">' +
+      '<span class="ic-price">' + fmt(it.price) + '</span>' +
+      '<button class="add-btn" onclick="event.stopPropagation();doAddItem(' + it.id + ')">+</button>' +
+      '</div></div></div>'
+    ).join('') + '</div>'
+  ).join('');
+}
+
+function updateUI() {
+  const ids = Object.keys(cart).map(Number);
+  const qty = ids.reduce((s, id) => s + cart[id], 0);
+  const sub = ids.reduce((s, id) => s + cart[id] * findItem(id).price, 0);
+  const vat = Math.round(sub * 0.1);
+  document.getElementById('fabN').textContent = qty;
+  document.querySelectorAll('.ic').forEach(c => c.classList.remove('in-cart'));
+  ids.forEach(id => {
+    const c = document.getElementById('ic-' + id);
+    const b = document.getElementById('ib-' + id);
+    if (c) { c.classList.add('in-cart'); b.textContent = cart[id]; }
+  });
+  const di = document.getElementById('drwItems');
+  di.querySelectorAll('.ci').forEach(e => e.remove());
+  document.getElementById('drwEmpty').style.display = ids.length ? 'none' : '';
+  ids.forEach(id => {
+    const it = findItem(id);
+    const d = document.createElement('div');
+    d.className = 'ci';
+    d.innerHTML =
+      '<div class="ci-icon">' + it.e + '</div>' +
+      '<div class="ci-info"><div class="ci-name">' + it.name + '</div><div class="ci-price">' + fmt(it.price) + '</div></div>' +
+      '<div class="qc">' +
+      '<button class="qb" onclick="doChQty(' + id + ',-1)">&minus;</button>' +
+      '<span class="qn">' + cart[id] + '</span>' +
+      '<button class="qb" onclick="doChQty(' + id + ',1)">+</button>' +
+      '</div>';
+    di.appendChild(d);
+  });
+  document.getElementById('fSub').textContent = fmt(sub);
+  document.getElementById('fVat').textContent = fmt(vat);
+  document.getElementById('fTot').textContent = fmt(sub + vat);
+  document.getElementById('sendBtn').disabled = !ids.length;
+}
+
+async function submitOrder() {
+  const ids = Object.keys(cart).map(Number);
+  if (!ids.length) return;
+  const sub = ids.reduce((s, id) => s + cart[id] * findItem(id).price, 0);
+  const vat = Math.round(sub * 0.1);
+  const orderId = 'ORD-' + String(++oc).slice(-5);
+  const order = {
+    orderId,
+    table: 'Ban ' + tableNum,
+    items: ids.map(id => ({ id, name: findItem(id).name, emoji: findItem(id).e, price: findItem(id).price, qty: cart[id] })),
+    note: document.getElementById('noteInput').value || '',
+    payMethod, subtotal: sub, vat, total: sub + vat,
+    status: 'new', createdAt: serverTimestamp()
+  };
+  document.getElementById('sndOvl').classList.add('show');
+  try {
+    await push(ref(db, 'orders'), order);
+    cart = {};
+    document.getElementById('noteInput').value = '';
+    updateUI();
+    doCloseCart();
+    document.getElementById('sndOvl').classList.remove('show');
+    document.getElementById('sucId').textContent = orderId;
+    document.getElementById('sucModal').classList.add('show');
+  } catch (err) {
+    document.getElementById('sndOvl').classList.remove('show');
+    showToast('Loi ket noi, thu lai!');
+    console.error(err);
+  }
+}
+
+function genQR() {
+  const box = document.getElementById('qrImg');
+  box.innerHTML = '';
+  const g = document.createElement('div');
+  g.style.cssText = 'display:grid;grid-template-columns:repeat(10,1fr);gap:2px;padding:10px;background:white;width:160px;height:160px;';
+  for (let i = 0; i < 100; i++) {
+    const c = document.createElement('div');
+    c.style.cssText = 'width:12px;height:12px;background:' + (Math.random() > 0.4 ? '#1A1208' : 'white') + ';border-radius:1px;';
+    g.appendChild(c);
+  }
+  box.appendChild(g);
+}
+
+// ---- GLOBAL FUNCTIONS (accessible from HTML onclick) ----
+window.doFilterCat = (f, btn) => {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[data-cat]').forEach(el => el.style.display = (f === 'all' || el.dataset.cat === f) ? '' : 'none');
+};
+window.doChangeTbl = v => { tableNum = v; document.getElementById('tblLabel').textContent = 'Ban ' + v; };
+window.doAddItem   = id => { cart[id] = (cart[id] || 0) + 1; updateUI(); showToast('Da them vao gio!'); };
+window.doChQty     = (id, d) => { cart[id] = (cart[id] || 0) + d; if (cart[id] <= 0) delete cart[id]; updateUI(); };
+window.doOpenCart  = () => { document.getElementById('drawer').classList.add('show'); document.getElementById('overlay').classList.add('show'); };
+window.doCloseCart = () => { document.getElementById('drawer').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); };
+window.doSelPay    = (el, m) => { document.querySelectorAll('.pm').forEach(e => e.classList.remove('sel')); el.classList.add('sel'); payMethod = m; };
+window.doOrder     = () => {
+  if (payMethod === 'transfer') {
+    const ids = Object.keys(cart).map(Number);
+    const sub = ids.reduce((s, id) => s + cart[id] * findItem(id).price, 0);
+    document.getElementById('qrAmt').textContent = fmt(sub + Math.round(sub * 0.1));
+    genQR();
+    document.getElementById('qrModal').classList.add('show');
+  } else {
+    submitOrder();
+  }
+};
+window.doConfirmTransfer = () => { document.getElementById('qrModal').classList.remove('show'); submitOrder(); };
+window.doCloseQr  = () => document.getElementById('qrModal').classList.remove('show');
+window.doCloseSuc = () => document.getElementById('sucModal').classList.remove('show');
+
+initMenu();
+</script>
+</body>
+</html>
